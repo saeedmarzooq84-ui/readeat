@@ -4,12 +4,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#1769c2">
+  <meta name="theme-color" content="#0759b8">
+  <meta name="description" content="هيكل الرياضيات - تطبيق مراجعة الرياضيات">
   <title>هيكل الرياضيات</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <div class="loading-screen">
+      <div class="loading-logo">هـ</div>
+      <h2>هيكل الرياضيات</h2>
+      <p>جاري تجهيز المراجعة...</p>
+    </div>
+  </div>
+
+  <input id="import-file" type="file" accept=".json,application/json" hidden>
   <script src="questions.js"></script>
   <script src="app.js"></script>
 </body>
