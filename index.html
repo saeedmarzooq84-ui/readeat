@@ -2,24 +2,429 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0759b8">
-  <meta name="description" content="هيكل الرياضيات - تطبيق مراجعة الرياضيات">
-  <title>هيكل الرياضيات</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#12345d">
+<title>هيكل الرياضيات</title>
+<style>
+:root {
+  --navy:#12345d;
+  --blue:#2670b9;
+  --pale:#eaf4ff;
+  --ink:#172d48;
+  --muted:#71839a;
+  --green:#16845b;
+  --red:#bd4444;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,Tahoma,sans-serif;
+  color:var(--ink);
+  background:linear-gradient(145deg,#eaf4ff,#f8fbff,#e1efff);
+}
+header{
+  background:linear-gradient(130deg,#102e53,#2670b9);
+  color:white;
+  padding:25px 18px;
+  border-radius:0 0 25px 25px;
+}
+.header-inner,main{max-width:850px;margin:auto}
+header h1{margin:0 0 8px;font-size:27px}
+header p{margin:0;color:#dcecff}
+main{padding:18px 14px 40px}
+.panel{
+  background:white;
+  padding:19px;
+  border-radius:20px;
+  box-shadow:0 8px 28px #12345d12;
+  margin-bottom:15px;
+}
+h2{font-size:20px;margin:0 0 15px}
+.muted{color:var(--muted);font-size:13px}
+.review{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px;
+  border:1px solid #e0eaf5;
+  border-radius:15px;
+  margin:11px 0;
+}
+.review h3{margin:0 0 5px;font-size:16px}
+button{
+  border:0;
+  border-radius:12px;
+  padding:13px 17px;
+  background:var(--blue);
+  color:white;
+  font-weight:bold;
+  font-size:15px;
+  cursor:pointer;
+}
+button:disabled{opacity:.45;cursor:not-allowed}
+.review button{white-space:nowrap}
+.secondary{background:#eaf2fb;color:#245b91}
+.hidden{display:none!important}
+.progress{
+  height:8px;
+  background:#e5edf7;
+  border-radius:10px;
+  margin:15px 0;
+  overflow:hidden;
+}
+.progress div{
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,#2670b9,#65a9e9);
+  transition:width .2s;
+}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.question{
+  font-size:20px;
+  font-weight:bold;
+  line-height:1.9;
+  margin:20px 0;
+  white-space:pre-wrap;
+}
+.answers{display:grid;gap:10px}
+.answer{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  text-align:right;
+  background:#f5f9ff;
+  color:#173b60;
+  border:2px solid #dce9f7;
+  min-height:58px;
+  line-height:1.7;
+}
+.answer .number{
+  flex:0 0 34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:#e1efff;
+  color:#2469aa;
+}
+.answer.selected{border-color:var(--blue);background:#e6f2ff}
+.answer.correct{background:#e3f8ec;border-color:var(--green);color:#126b49}
+.answer.wrong{background:#fff0f0;border-color:var(--red);color:#a22}
+.feedback{
+  padding:14px;
+  border-radius:12px;
+  margin-top:15px;
+  font-weight:bold;
+  line-height:1.8;
+}
+.good{background:#e3f8ec;color:#126b49}
+.bad{background:#fff0f0;color:#a22}
+.actions{display:flex;gap:10px;margin-top:18px}
+.actions button{flex:1}
+.score{
+  font-size:38px;
+  font-weight:900;
+  color:var(--blue);
+  text-align:center;
+  margin:20px;
+}
+.result-row{
+  display:flex;
+  justify-content:space-between;
+  padding:13px 0;
+  border-bottom:1px solid #edf1f6;
+}
+.notice{
+  background:#f4f8fd;
+  border:1px solid #e3edf9;
+  border-radius:13px;
+  padding:12px;
+  color:#61748a;
+  font-size:12px;
+  line-height:1.8;
+  margin-top:14px;
+}
+textarea{
+  width:100%;
+  padding:13px;
+  border:1px solid #cbdff2;
+  border-radius:13px;
+  font:inherit;
+  resize:vertical;
+}
+@media(max-width:450px){
+  .review{padding:13px}
+  .review button{padding:11px}
+  .question{font-size:18px}
+}
+</style>
 </head>
 <body>
-  <div id="app">
-    <div class="loading-screen">
-      <div class="loading-logo">هـ</div>
-      <h2>هيكل الرياضيات</h2>
-      <p>جاري تجهيز المراجعة...</p>
-    </div>
+
+<header>
+  <div class="header-inner">
+    <h1>📘 هيكل الرياضيات</h1>
+    <p>مراجعة الرياضيات — الصف السادس</p>
+  </div>
+</header>
+
+<main>
+
+<section id="home" class="panel">
+  <h2>اختر المراجعة</h2>
+  <div id="reviews"></div>
+  <div class="notice">
+    اختر المراجعة، ثم أجب عن الأسئلة واحداً تلو الآخر.
+  </div>
+</section>
+
+<section id="quiz" class="panel hidden">
+  <div class="row">
+    <b id="reviewTitle"></b>
+    <span id="counter" class="muted"></span>
   </div>
 
-  <input id="import-file" type="file" accept=".json,application/json" hidden>
-  <script src="questions.js"></script>
-  <script src="app.js"></script>
+  <div class="progress"><div id="progress"></div></div>
+
+  <div class="row">
+    <b id="questionId" style="color:#2670b9"></b>
+    <span id="questionPage" class="muted"></span>
+  </div>
+
+  <div id="question" class="question"></div>
+
+  <div id="answers" class="answers"></div>
+
+  <div id="writtenWrap" class="hidden">
+    <textarea id="writtenAnswer" rows="3" placeholder="اكتب إجابتك هنا"></textarea>
+  </div>
+
+  <div id="feedback"></div>
+
+  <div class="actions">
+    <button class="secondary" onclick="goHome()">الرئيسية</button>
+    <button id="next" onclick="nextQuestion()" disabled>التالي</button>
+  </div>
+</section>
+
+<section id="result" class="panel hidden">
+  <h2>نتيجة المراجعة 🎉</h2>
+  <div class="score" id="score"></div>
+  <div id="summary"></div>
+  <button onclick="goHome()" style="width:100%;margin-top:18px">الرئيسية</button>
+</section>
+
+<section id="results" class="panel hidden">
+  <h2>نتائج المراجعات</h2>
+  <div id="allResults"></div>
+  <button onclick="goHome()" style="margin-top:15px">الرئيسية</button>
+</section>
+
+</main>
+
+<script>
+const questions = [];
+
+/*
+ضع الأسئلة الأصلية الـ158 هنا داخل المصفوفة.
+كل سؤال له:
+id, page, review, text, options, correct
+
+مثال على شكل السؤال:
+{
+ id:"Q1-1",
+ page:4,
+ review:0,
+ text:"نص السؤال",
+ options:["الإجابة الأولى","الإجابة الثانية","الإجابة الثالثة","الإجابة الرابعة"],
+ correct:2
+}
+
+correct هو رقم الإجابة الصحيحة: 1 أو 2 أو 3 أو 4.
+*/
+
+const reviews = [
+ {name:"المراجعة الأولى",pages:"1–20"},
+ {name:"المراجعة الثانية",pages:"21–40"},
+ {name:"المراجعة الثالثة",pages:"41–69"}
+];
+
+let currentReview=0;
+let currentIndex=0;
+let selectedAnswers={};
+let reviewScores={};
+
+const $=id=>document.getElementById(id);
+
+function showOnly(id){
+ ["home","quiz","result","results"].forEach(x=>$(x).classList.add("hidden"));
+ $(id).classList.remove("hidden");
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function renderReviews(){
+ $("reviews").innerHTML="";
+ reviews.forEach((r,i)=>{
+  const count=questions.filter(q=>q.review===i).length;
+  const div=document.createElement("div");
+  div.className="review";
+  div.innerHTML=`
+   <div>
+    <h3>${r.name}</h3>
+    <span class="muted">الصفحات ${r.pages} · ${count} سؤال</span>
+   </div>
+   <button onclick="startReview(${i})">ابدأ</button>`;
+  $("reviews").appendChild(div);
+ });
+}
+
+function startReview(index){
+ currentReview=index;
+ currentIndex=0;
+ selectedAnswers={};
+ showOnly("quiz");
+ renderQuestion();
+}
+
+function getCurrentQuestions(){
+ return questions.filter(q=>q.review===currentReview);
+}
+
+function renderQuestion(){
+ const list=getCurrentQuestions();
+ const q=list[currentIndex];
+
+ if(!q){
+  finishReview();
+  return;
+ }
+
+ $("reviewTitle").textContent=reviews[currentReview].name;
+ $("counter").textContent=`${currentIndex+1} / ${list.length}`;
+ $("progress").style.width=((currentIndex+1)/list.length*100)+"%";
+ $("questionId").textContent=q.id||"";
+ $("questionPage").textContent=q.page?"صفحة "+q.page:"";
+ $("question").textContent=q.text;
+ $("answers").innerHTML="";
+ $("feedback").innerHTML="";
+ $("next").disabled=true;
+ $("next").textContent=currentIndex===list.length-1?"إنهاء المراجعة":"التالي";
+
+ if(q.options&&q.options.length){
+  $("writtenWrap").classList.add("hidden");
+  $("answers").classList.remove("hidden");
+
+  q.options.forEach((option,i)=>{
+   const button=document.createElement("button");
+   button.className="answer";
+   button.innerHTML=`<span class="number">${i+1}</span><span></span>`;
+   button.querySelector("span:last-child").textContent=option;
+   button.onclick=()=>chooseAnswer(i+1);
+   $("answers").appendChild(button);
+  });
+ }else{
+  $("answers").classList.add("hidden");
+  $("writtenWrap").classList.remove("hidden");
+  $("writtenAnswer").value=selectedAnswers[currentIndex]?.text||"";
+  $("next").disabled=false;
+ }
+}
+
+function chooseAnswer(number){
+ const list=getCurrentQuestions();
+ const q=list[currentIndex];
+
+ if(selectedAnswers[currentIndex])return;
+
+ selectedAnswers[currentIndex]={answer:number};
+
+ const buttons=$("answers").querySelectorAll("button");
+ buttons.forEach((button,i)=>{
+  button.disabled=true;
+  if(q.correct===i+1){
+   button.classList.add("correct");
+  }
+  if(number===i+1&&number!==q.correct){
+   button.classList.add("wrong");
+  }
+ });
+
+ if(!q.correct){
+  $("feedback").innerHTML=
+   `<div class="feedback">تم تسجيل إجابتك. لا يوجد مفتاح تصحيح مؤكد لهذا السؤال.</div>`;
+ }else if(number===q.correct){
+  $("feedback").innerHTML=
+   `<div class="feedback good">✅ إجابتك صحيحة!</div>`;
+ }else{
+  $("feedback").innerHTML=
+   `<div class="feedback bad">❌ إجابتك غير صحيحة. الإجابة الصحيحة هي: ${q.options[q.correct-1]}</div>`;
+ }
+
+ $("next").disabled=false;
+}
+
+function nextQuestion(){
+ const list=getCurrentQuestions();
+ const q=list[currentIndex];
+
+ if(!q.options?.length){
+  selectedAnswers[currentIndex]={
+   text:$("writtenAnswer").value
+  };
+ }
+
+ if(currentIndex<list.length-1){
+  currentIndex++;
+  renderQuestion();
+ }else{
+  finishReview();
+ }
+}
+
+function finishReview(){
+ const list=getCurrentQuestions();
+ let correct=0;
+ let checked=0;
+
+ list.forEach((q,i)=>{
+  const answer=selectedAnswers[i];
+  if(answer&&q.correct&&answer.answer){
+   checked++;
+   if(answer.answer===q.correct)correct++;
+  }
+ });
+
+ reviewScores[currentReview]={correct,checked,total:list.length};
+ $("score").textContent=`${correct} / ${checked}`;
+ $("summary").textContent=
+  `أجبت عن ${Object.keys(selectedAnswers).length} من ${list.length} سؤالاً.`;
+ showOnly("result");
+}
+
+function goHome(){
+ showOnly("home");
+}
+
+function showResults(){
+ $("allResults").innerHTML="";
+ reviews.forEach((r,i)=>{
+  const score=reviewScores[i];
+  const div=document.createElement("div");
+  div.className="result-row";
+  div.innerHTML=`
+   <b>${r.name}</b>
+   <span>${score?score.correct+" / "+score.checked:"لم تبدأ بعد"}</span>`;
+  $("allResults").appendChild(div);
+ });
+ showOnly("results");
+}
+
+renderReviews();
+</script>
+
 </body>
 </html>
